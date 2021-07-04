@@ -1,0 +1,73 @@
+1)Q:How can you produce a list of facilities that charge a fee to memebers, and that fee is less than 1/50th of the monthlymaintenance cost?
+Return the facid, facility name, member cost, and momthlymaintenance of the facilities.
+	Query:SELECT facid, name, membercost, monthlymaintenance FROM cd.facilities
+	      WHERE membercost > 0
+	      AND membercost < (monthlymaintenance/50.0);
+
+2)Q:How can you retrieve the details of facilities with ID 1 and 5? do it without using the OR operator.
+	Query:SELECT * FROM cd.facilities
+	      WHERE facid IN (1,5);
+
+3)Q:How can you produce a list of memebers who joined after the start of September 2012? Return the memid, surname, firstname, and joindate of the members in question.
+	Query:SELECT memid, surname, firstname, joindate FROM cd.members
+	      WHERE joindate >='2012-09-01';
+
+4)Q:You'd like to get the signup date of your last member. How can you retrieve this informaton?
+	Query:SELECT joindate FROM cd.members
+	      ORDER BY joindate DESC
+	      LIMIT 1;
+	OR:SELECT MAX (joindate) FROM cd.members;
+
+5)Q:Produce a count of the number of facilities that have a cost to guests of 10 or more.
+	Query:SELECT COUNT (*) FROM cd.facilities
+	      WHERE guestcost >= 10;
+
+6)Q:Produce a list of the total number of slots booked per facility in the month of September 2012. Produce an output table consisting of facility id and slots, sorted
+by the number of slots.
+	Query:SELECT facid, SUM(slots) FROM cd.bookings
+	      WHERE starttime >= '2012-09-01'
+	      AND starttime <= '2012-10-01'
+	      GROUP BY facid
+	      ORDER BY SUM(slots);
+
+7)Q:How can you produce a list of the starttimes for bookings for tennis courts for the date '2012-09-21'? Return a list of starttime and facility name pairings,
+ordered by the time.
+	Query:SELECT cd.bookings.starttime, cd.facilities.name FROM cd.bookings
+	      INNER JOIN cd.facilities 
+	      ON cd.bookings.facid = cd.facilities.facid
+	      WHERE cd.bookings.starttime >= '2012-09-21'
+	      AND cd.bookings.starttime < '2012-09-22'
+	      AND cd.facilities.name IN ('Tennis Court 1', 'Tennis Court 2')
+	      ORDER BY cd.bookings.starttime;
+
+8)Q:How can you produce a list of the start times for bookings by members named 'David Farrell'?
+	Query:SELECT starttime FROM cd.bookings
+	      INNER JOIN cd.members
+	      ON cd.members.memid = cd.bookings.memid
+	      WHERE cd.members.firstname = 'David'
+	      AND cd.members.surname = 'Farrell';
+
+9)Q:During which months did payments occur? Format your answer to return back the full month name.
+	Query:SELECT DISTINCT (TO_CHAR(payment_date, 'MONTH')) FROM payment;
+
+10)Q:How many payments occured on a Monday?
+	Query:SELECT COUNT (*) FROM payment
+	      WHERE EXTRACT (dow FROM payment_date) = 1;
+
+11)Q:What percentage of the replacement cost is a rental rate in 2decimal point?
+	Query:SELECT ROUND (rental_rate/replacement_cost, 2)*100 AS percent_cost
+	      FROM film;
+
+12)Q:How old is the payment timestamp?
+	Query:SELECT AGE (payment_date)
+	      FROM payment;
+
+13)Q:A company wants a new table that contains both the first and last names of their employees. 
+	Query:SELECT first_name || ' ' || last_name AS full_name
+	       FROM Customer;
+ 
+14)Q:You have been asked to create an office email for employees that consists of their firstname
+and three letters of their lastname with the suffix '@sirius.com'.
+	Query:SELECT LOWER(first_name) || LOWER(LEFT(last_name, 3))|| '@sirius.com' AS office_email
+	      FROM customer;
+
