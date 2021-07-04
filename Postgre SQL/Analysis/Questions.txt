@@ -1,0 +1,174 @@
+1)Q: Send out a promotional email to our existing customers
+	Query: SELECT first_name, last_name, email FROM customer;
+
+2)Q: An Australian visitor isn't familiar with MPAA movie ratings(PG, PG-13, R, etc...). 
+We want to know the types of ratings we have in our database. what ratings do we have available?
+	Drop down table menu on film to see columns that are available
+	Query: SELECT DISTINCT rating FROM film;
+
+3)Q: A customer forgot their wallet at our store. We need to track down their email to inform them.
+What is the email for the customer with the name Nancy Thomas.
+	Query: SELECT email FROM customer
+	       WHERE first_name = 'Nancy'
+	       AND last_name = 'Thomas';
+
+4)Q: A customer wants to know what the movie 'Outlaw Hanky' is about. Could you give them the description for the movie "Outlaw Hanky"?
+	Query: SELECT description FROM film
+	       WHERE title = 'Outlaw Hanky';
+
+5)Q: A customer is late on their movie return, and we have mailed them a letter to their address at '259 Ipoh Drive'. we should also call
+them on the phone to let them know. Can you get the phone number for the customer who lives at '259 Ipoh Drive'?
+	Query: SELECT phone FROM address
+	       WHERE address = '259 Ipoh Drive';
+
+6)Q:How many payment transactions were greater than $5.00?
+	Query:SELECT COUNT (amount) FROM payment 
+	      WHERE amount > 5;
+
+7)Q:How many actors have a first name that starts with the letter P?
+	Query:SELECT COUNT (*) FROM actor
+	      WHERE first_name LIKE 'P%';
+
+8)Q:How many unique districts are our customers from?
+	Query:SELECT COUNT (DISTINCT(district)) FROM address;
+
+9)Q:Retrieve the list of names for those distinct districts from the previous question.
+	Query:SELECT DISTINCT(district) FROM address;
+
+10)Q:How many films have a rating of R and a replacement cost between $5 and $15?
+	Query:SELECT COUNT (*) FROM film
+	      WHERE rating = 'R'
+	      AND replacement_cost BETWEEN 5 AND 15;
+
+11)Q:How many films have the word TRUMAN somewhere in the title?
+	Query:SELECT COUNT (*) FROM film
+	      WHERE title LIKE '%Truman%';
+
+12)Q:We have two staff members with staff IDs 1 and 2. We want to give a bonus to the staff member that handled the most
+payments(in terms of number of payments processed). How many payments did each staff member handle and who gets the bonus?
+	Query:SELECT staff_id, COUNT (amount) FROM payment
+	      GROUP BY staff_id;
+
+13)Q:Coporate headquarters is conducting a study on the relationship between replacement cost and a movie MPAA rating. What is the
+average replacement cost per MPAA rating?
+	Query:SELECT rating, ROUND (AVG (replacement_cost), 2) 
+	      FROM film
+	      GROUP BY rating;
+
+14)Q:We are running a promotion to reward our top 5 customers with coupons. what are the customer IDs of the top 5 customers by total spend?
+	Query:SELECT customer_id, SUM (amount) 
+	      FROM payment
+	      GROUP BY customer_id
+	      ORDER BY SUM(amount) DESC
+	      LIMIT 5;
+
+15)Q:We are launching a platinum service for our most loyal customers. We will assign platinum status to customers that have had 40 or more transactions payments.
+What customer ids are eligible for platinum status?
+	Query:SELECT customer_id, COUNT (amount) 
+	      FROM payment
+	      GROUP BY customer_id
+	      HAVING COUNT (amount) >=40;
+
+16)Q:What are the customer ids of customers who have spent more than $100 in payment transactions with our staff_id number 2.
+	Query:SELECT customer_id, SUM (amount) 
+	      FROM payment
+	      WHERE staff_id = 2
+	      GROUP BY customer_id
+	      HAVING SUM (amount) > 100;
+
+17)Q: What customer has the highest customer ID number whose name starts with an E and has an address ID lower than 500?
+	Query:SELECT first_name, last_name FROM customer
+	      WHERE first_name LIKE 'E%'
+	      AND address_id < 500
+	      ORDER BY customer_id DESC
+	      LIMIT 1;
+
+18)Q:California sales tax laws have changed and we need to alert our customers to this through email. What are the emails of the customers who live in california?
+	Query:SELECT email, district FROM customer
+	      INNER JOIN address 
+	      ON address.address_id = customer.address_id
+	      WHERE district = 'California';
+
+19)Q:A customer walks in and is a huge fan of the acttor "Nick Wahlberg" and wants to know which movies he is in.
+Get a list of all the movies "Nick Wahlberg" has been in.
+	Query:SELECT first_name, last_name,title FROM actor
+	      INNER JOIN  film_actor
+	      ON actor.actor_id = film_actor.actor_id
+	      INNER JOIN film
+	      ON film_actor.film_id = film.film_id
+	      WHERE first_name = 'Nick'
+	      AND last_name = 'Wahlberg';
+
+20)Q:Create a new database called 'School'. This database should have two tables: teachers and students.
+The students table should have columns for students_id,first_name, last_name, homeroom_number, phone, email, and graduation year.
+The teachers table should have columns for teacher_id,homeroom_number,department,email, and phone.
+The constriants are mostly up to you, but your table constriants do have to consider the following:
+1.We must have a phone number to contact students in case of an emergency
+2.We must have ids as the primary keys 
+3.Phone numbers and emails must be unique to the individual.
+
+Once you have made the tables,insert a student name Mark Watney,(student_id = 1) who has a phone number of 777-555-1234 and doesn't have an email.
+He graduates in 2035 and has 5 as a homeroom number.
+Then insert a teachers name Jonas Salk (teacher_id = 1) who has a homeroom number of 5 and is from the biology department.
+His contact info is jsalk@school.org and a phone number of 777-555-4321.
+Keep in mind that insert tasks may effect your constraints.
+
+	Query:Right-click on the database drop down menu, Click create, follow SQL scripts to name and execute the tasks.
+
+	      CREATE TABLE students(
+	      	students_id SERIAL PRIMARY KEY,
+	      	first_name VARCHAR (50) NOT NULL,
+	      	last_name VARCHAR (50) NOT NULL,
+	      	homeroom_number INTEGER,
+	      	phone VARCHAR (20) UNIQUE NOT NULL,
+	      	email VARCHAR (300) UNIQUE,
+	      	graduation_year INTEGER);
+
+	      CREATE TABLE teachers(
+	    	teachers_id SERIAL PRIMARY KEY,
+	     	first_name VARCHAR (50) NOT NULL,
+	     	last_name VARCHAR (50) NOT NULL,
+	     	homeroom_number INTEGER,
+	     	department VARCHAR (50),
+	     	phone VARCHAR (20) UNIQUE,
+	     	email VARCHAR (300) UNIQUE);
+
+	      INSERT INTO students (first_name, last_name, homeroom_number, phone, graduation_year)
+	     	VALUES
+	     	('Mark', 'Watney', '5', '7775551234', '2035');
+
+	      INSERT INTO teachers (first_name, last_name, homeroom_number, department, phone, email)
+	     	VALUES
+	      	('Jonas', 'Salk', '5', 'Biology', '7775554321', 'jsalk@school.org');
+
+21)Q:Remove person's column and its asscociated dependencies
+	Query:ALTER TABLE information
+	      DROP COLUMN IF EXISTS person CASCADE
+
+22)Q:Delete the job engineer from the job name list. 
+	Query:DELETE FROM job
+	      WHERE job_name = 'Engineer'
+	      RETURNING job_id, job_name;
+
+23)Q:Its the close of the day, your boss wants you to sign out all employees at the current time.
+	Query:UPDATE account
+	      SET last_login = CURRENT_TIMESTAMP
+
+24)Q:Create an employement table that includes employees_id, firstname, lastname, age, birthdate, and salary. No employee must be below 21 or be born in the 1800s. Every employee must have a salary above $1000.
+	Query:CREATE TABLE employment(
+	      	employment_id SERIAL PRIMARY KEY,
+	      	first_name VARCHAR (50) NOT NULL,
+	      	last_name VARCHAR (50) NOT NULL,
+	      	age SMALLINT CHECK (age >= 21),
+	      	birthdate DATE CHECK (birthdate > '1900-01-01'),
+	      	salary INTEGER CHECK (salary > 0))
+
+
+
+
+
+
+
+
+
+
