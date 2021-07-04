@@ -1,0 +1,14 @@
+1)Q:You found out that you work mostly with customers name, email and address. Hence to get easy access to these informations, you decide to create view having just these columns.
+	Query:CREATE VIEW customer_info AS
+	      SELECT first_name, last_name,email, address FROM customer
+	      INNER JOIN address
+	      ON customer.address_id = address.address_id;
+
+2)Q:Your boss wants you to add the district column to the view you just created. How do you go about it?
+	Query:CREATE OR REPLACE VIEW customer_info AS
+	      SELECT first_name, last_name,email, address, district FROM customer
+	      INNER JOIN address
+	      ON customer.address_id = address.address_id;
+
+3)Q:You then decide to change the name of the view to c_information.
+	Query:ALTER VIEW customer_info RENAME TO c_information;
